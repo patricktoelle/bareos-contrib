@@ -24,8 +24,8 @@
 # NscaSender for Bareos python plugins
 # Functions taken and adapted from bareos-dir.py
 
-from bareosdir import * 
-from bareos_dir_consts import * 
+from bareosdir import *
+from bareos_dir_consts import *
 import BareosDirPluginBaseclass
 import pynsca
 
@@ -46,9 +46,14 @@ class BareosDirPluginNscaSender(BareosDirPluginBaseclass.BareosDirPluginBaseclas
             self.monitorHost = self.options['monitorHost']
         if not 'encryption' in self.options:
             DebugMessage(context, 100, "Paraemter encryption not set for plugin %s. Setting to 1 (XOR nsca default)" %(self.__class__))
-            self.encryption= 1; # XOR is nsca default 
+            self.encryption= 1; # XOR is nsca default
         else:
             self.encryption = int(self.options['encryption'])
+        if not 'password' in self.options:
+            DebugMessage(context, 100, "Parameter password not set for plugin %s. Setting to None (NSCA default)" %(self.__class__))
+            self.password = None;
+        else:
+            self.password = self.options['password']
         if not 'monitorPort' in self.options:
             self.monitorPort = 5667
         else:
@@ -80,7 +85,7 @@ class BareosDirPluginNscaSender(BareosDirPluginBaseclass.BareosDirPluginBaseclas
 
         return bRCs['bRC_OK'];
 
-       
+
     def evaluateJobStatus(self,context):
         '''
         Depending on the jobStatus we compute monitoring status and monitoring message
@@ -100,7 +105,7 @@ class BareosDirPluginNscaSender(BareosDirPluginBaseclass.BareosDirPluginBaseclas
             self.nagiosMessage = "WARNING: %s CANCELED" %coreMessage
         elif (self.jobStatus == 'T'):
             self.nagiosResult = 0; # OK
-            self.nagiosMessage = "OK: %s" %coreMessage 
+            self.nagiosMessage = "OK: %s" %coreMessage
         else:
             self.nagiosResult = 3; # unknown
             self.nagiosMessage = "UNKNOWN: %s" %coreMessage
@@ -108,7 +113,7 @@ class BareosDirPluginNscaSender(BareosDirPluginBaseclass.BareosDirPluginBaseclas
         # Performance data according Nagios developer guide
         self.perfstring = "|Errors=%d;;;; Bytes=%d;;;; Files=%d;;;; Throughput=%dB/s;;;; jobRuntime=%ds;;;; jobTotalTime=%ds;;;;" \
             % (self.jobErrors, self.jobBytes, self.jobFiles, self.throughput, self.jobRunningTime, self.jobTotalTime)
-        
+
         DebugMessage(context, 100, "Nagios Code: %d, NagiosMessage: %s\n" %(self.nagiosResult,self.nagiosMessage));
         DebugMessage(context, 100, "Performance data: %s\n" %self.perfstring)
 
@@ -121,7 +126,7 @@ class BareosDirPluginNscaSender(BareosDirPluginBaseclass.BareosDirPluginBaseclas
         DebugMessage(context, 100, "Submitting check result to host %s, encryption: %d, Port: %d\n" \
             %(self.monitorHost,self.encryption, self.monitorPort))
         try:
-            notif = pynsca.NSCANotifier(self.monitorHost,self.monitorPort, self.encryption)
+            notif = pynsca.NSCANotifier(self.monitorHost,self.monitorPort, self.encryption, self.password)
             notif.svc_result(self.checkHost, self.checkService, self.nagiosResult, self.nagiosMessage + self.perfstring)
         except:
             JobMessage(context, bJobMessageType['M_WARNING'], "Plugin %s could not transmit check result to host %s, port %d\n"\

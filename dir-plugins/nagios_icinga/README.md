@@ -23,4 +23,5 @@ In your JobDefs or Job Definition configure the plugin itself:
 * checkHost: the host name for your check result
 * checkService: the service name for your result
 * encryption=1  nsca encryption method
+* password=None nsca encryption password
 * monitorPort (default 5667), nsca port
