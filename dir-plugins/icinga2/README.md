@@ -15,13 +15,12 @@ In your JobDefs or Job Definition configure the plugin itself:
 
     Job {
       Name = "BackupClient1"
-      DIR Plugin Options ="python:module_path=/usr/lib64/bareos/plugins:module_name=bareos-dir-icinga2-sender:apiAdress=http://your.icinga2.server:5665:username=apiuser:password=apipassword:checkHost=bareos:checkService=bareos_job_client1"
+      DIR Plugin Options ="python:module_path=/usr/lib64/bareos/plugins:module_name=bareos-dir-icinga2-sender:apiAdress=your.icinga2.server:username=apiuser:password=apipassword:checkHost=bareos:checkService=bareos_job_client1"
       JobDefs = "DefaultJob"
     }
 
-* monitorHost: IP our resolvable address of your Icinga/Nagios host
+* monitorHost: IP or resolvable address of your Icinga 2 host
 * checkHost: the host name for your check result
 * checkService: the service name for your result
-* encryption=1  nsca encryption method
-* password=None nsca encryption password
-* monitorPort (default 5667), nsca port
+* username: Icinga2 Api username
+* password: Icinga2 Api password
