@@ -132,6 +132,7 @@ class BareosDirPluginIcinga2Sender(BareosDirPluginBaseclass.BareosDirPluginBasec
         DebugMessage(context, 100, "Submitting check result to %s using username: %s \n" \
             %(self.monitorHost,self.username))
         try:
+	    requests.packages.urllib3.disable_warnings()
   	    url = "https://" + self.monitorHost + ":5665/v1/actions/process-check-result"
             params = { "service": self.checkHost + "!" + self.checkService }
             headers = { "Accept": "application/json" }
@@ -139,7 +140,7 @@ class BareosDirPluginIcinga2Sender(BareosDirPluginBaseclass.BareosDirPluginBasec
 
             DebugMessage(context, 100, "Data %s, URL %s, Username %s, Password %s, Params %s, Headers %s \n" %(postdata, url, self.username, self.password, params, headers))
             response = requests.post( url , auth=(self.username, self.password), json=postdata, verify=False, headers=headers, params=params )
-
+	    DebugMessage(context, 100, "Response: %s \n" %(response.text))
         except:
 	    pass
             DebugMessage(context, 100, response)
