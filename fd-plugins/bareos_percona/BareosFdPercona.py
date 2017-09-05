@@ -87,7 +87,7 @@ class BareosFdPercona (BareosFdPluginBaseclass):
         if 'dumpoptions' in self.options:
             self.dumpoptions = self.options['dumpoptions']
         else:
-            self.dumpoptions = "%s --backup --datadir=/var/lib/mysql/ --stream=xbstream --extra-lsndir=%s " % (self.mycnf, self.tempdir)
+            self.dumpoptions = "%s --backup --open-files-limit=65536 --datadir=/var/lib/mysql/ --stream=xbstream --extra-lsndir=%s " % (self.mycnf, self.tempdir)
 
         # We need to call mysql to get the current Log Sequece Number (LSN)
         if 'mysqlcmd' in self.options:
